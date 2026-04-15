@@ -1,1 +1,3 @@
-ircoder-env/
+*.log
+.venv
+.idea
