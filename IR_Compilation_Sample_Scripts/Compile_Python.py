@@ -9,8 +9,8 @@ from multiprocessing import (
 )
 from tqdm import tqdm
 
-root_path = "/home/ubuntu/Downloads/TheStack_IR/Collated/Python"    
-out_path = "/home/ubuntu/Downloads/TheStack_IR/Scripts/Python"
+root_path = "/WAVE/scratch/CSEN-346-Sp26/ircoder/data/Python"
+out_path = "/WAVE/scratch/CSEN-346-Sp26/ircoder/ir/Python"
 
 
 def compile_worker(dir_list_chunk):
