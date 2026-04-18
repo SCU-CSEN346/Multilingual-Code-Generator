@@ -7,3 +7,10 @@ We are doing Option 2. We are improving on the solution by getting better result
 - Stephen McCabe: paper write up/introduction
 - Anuj Patnaik: abstract write up/ initial code set up
 - Bradley Gore: ran the code with the dockerfile. Did the environment setup. Wrote the slurm file
+
+## SETUP
+TO access starcoder from Hugging Face, you must
+1. Log into HF
+2. Visit https://huggingface.co/bigcode/starcoderbase-1b and click *Agree ane access repository*
+3. Visit https://huggingface.co/bigcode/starcoderbase-3b and click *Agree ane access repository*
+4. Visit https://huggingface.co/bigcode/starcoderbase-7b and click *Agree ane access repository*
