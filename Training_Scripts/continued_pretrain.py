@@ -19,7 +19,7 @@ from datasets import load_dataset
 from peft import (
     LoraConfig,
     get_peft_model,
-    prepare_model_for_int8_training
+    prepare_model_for_kbit_training
 )
 import transformers
 from transformers import (
@@ -242,10 +242,10 @@ def main():
 
     # Log on each process the small summary:
     logger.warning(
-        f"Process rank: {int(os.environ['RANK'])}, "
+        f"Process rank: {training_args.process_index}, "  # Uses internal rank (0 for single GPU)
         + f"device: {training_args.device}, "
         + f"n_gpu: {training_args.n_gpu}, " 
-        + f"world_size {int(os.environ['LOCAL_WORLD_SIZE'])}, "
+        + f"world_size {training_args.world_size}, "      # Uses internal world size (1 for single GPU)
         + f"distributed training: {training_args.parallel_mode.value == 'distributed'}, "
         + f"16-bits training: {training_args.fp16}"
     )
