@@ -9,6 +9,15 @@ We are doing Option 2. We are improving on the solution by getting better result
 - Bradley Gore: ran the code with the dockerfile. Did the environment setup. Wrote the slurm file
 
 ## SETUP
+This section outlines basics to set things up. *It is also a work in progress*
+
+### Environment Variables
+To prevent API keys being accidentally uploaded to git, they should be stored as environment variables.
+The following environment variables must be set to use the continued pretrain script.
+* HF_TOKEN
+* WANDB_API_KEY
+
+### Accepting Terms
 TO access starcoder from Hugging Face, you must
 1. Log into HF
 2. Visit https://huggingface.co/bigcode/starcoderbase-1b and click *Agree ane access repository*
