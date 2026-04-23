@@ -1,0 +1,30 @@
+Bootstrap: docker
+From: nvcr.io/nvidia/pytorch:23.10-py3
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+
+    # 1. System dependencies
+    apt-get update && apt-get install -y git build-essential
+
+    # 2. Pinned Python stack for IRCoder
+    pip install --no-cache-dir \
+        transformers==4.40.2 \
+        accelerate==0.29.3 \
+        deepspeed==0.14.0 \
+        peft==0.10.0 \
+        bitsandbytes==0.43.1 \
+        datasets==2.18.0 \
+        evaluate==0.4.1 \
+        wandb==0.16.6 \
+        scipy sentencepiece
+
+    # 3. Compile Flash-Attention 2 (Uses the GPU requested in the Slurm job)
+    pip install flash-attn==2.5.8 --no-build-isolation
+
+%environment
+    export LC_ALL=C
+    export PYTHONUNBUFFERED=1
+
+%runscript
+    exec /usr/bin/python "$@"
