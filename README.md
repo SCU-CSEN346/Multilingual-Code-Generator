@@ -8,6 +8,11 @@ We are doing Option 2. We are improving on the solution by getting better result
 - Anuj Patnaik: abstract write up/ initial code set up
 - Bradley Gore: ran the code with the dockerfile. Did the environment setup. Wrote the slurm file
 
+**Submission 2: Methods & First Training Attempts**
+- Stephen McCabe: ...
+- Anuj Patnaik: ...
+- Bradley Gore: Created an improved training image. Created scripts for running training scripts using HPC slurm. Got continued-pretrain to run. Performed initial testing using FP16 to try to speed up training speed.
+
 ## SETUP
 This section outlines basics to set things up. *It is also a work in progress*
 
