@@ -217,6 +217,14 @@ def main():
     parser = HfArgumentParser((LoggingArguments, ModelArguments, DataTrainingArguments, TrainingArguments))
     log_args, model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
+    if not model_args.token:
+        model_args.token = os.getenv("HF_TOKEN")
+    assert model_args.token is not None
+
+    if not log_args.wandb_token:
+        log_args.wandb_token = os.getenv("WANDB_API_KEY")
+    assert log_args.wandb_token is not None    
+
     quant_config = BitsAndBytesConfig(
         load_in_8bit=True,
         llm_int8_threshold=model_args.llm_int8_threshold
