@@ -3,7 +3,7 @@
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=64G
+#SBATCH --mem=128G
 #SBATCH --time=02:00:00
 #SBATCH --output=build_%j.log
 
@@ -28,12 +28,17 @@ if [ ! -r "$ABS_DEF_PATH" ]; then
     exit 1
 fi
 
-# --- 3. LOCAL WORKSPACE SETUP ---
-# We use /tmp to bypass network filesystem (NFS/Lustre) 'fakeroot' issues
-NODE_TMP="/tmp/${USER}_build_${SLURM_JOB_ID}"
+# --- 3. RAM DRIVE WORKSPACE SETUP ---
+# /dev/shm is a world-writable RAM disk. 
+# We create a unique folder there for your build.
+NODE_TMP="/dev/shm/${USER}_build_${SLURM_JOB_ID}"
 mkdir -p "$NODE_TMP"
+
+# Tell Singularity to use this RAM-based folder for everything
 export SINGULARITY_TMPDIR="$NODE_TMP"
 export SINGULARITY_CACHEDIR="$NODE_TMP"
+
+echo ">>> Using RAM drive at /dev/shm. Allocated RAM: 128GB"
 
 # --- 4. THE BUILD ---
 echo ">>> User: $USER"
