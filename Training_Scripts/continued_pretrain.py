@@ -346,6 +346,7 @@ def main():
         torch_dtype=torch_dtype,
         low_cpu_mem_usage=model_args.low_cpu_mem_usage,
         quantization_config=quant_config,
+        attn_implementation="sdpa"
     )
 
     embedding_size = model_base.get_input_embeddings().weight.shape[0]
