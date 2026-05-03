@@ -9,7 +9,7 @@ We are doing Option 2. We are improving on the solution by getting better result
 - Bradley Gore: ran the code with the dockerfile. Did the environment setup. Wrote the slurm file
 
 **Submission 2: Methods & First Training Attempts**
-- Stephen McCabe: 
+- Stephen McCabe: Report sections written (experimental setup, datasets, evaluation setup), initial dataset, previous report sections revised/completed (related work)
 - Anuj Patnaik: Worked on the Parameter Efficient Fine Tuning and the Experimental Setup in the paper
 - Bradley Gore: Created an improved training image. Created scripts for running training scripts using HPC slurm. Got continued-pretrain to run. Performed initial testing using FP16 to try to speed up training speed.
 
