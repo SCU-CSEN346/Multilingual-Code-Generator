@@ -15,7 +15,7 @@ We are doing Option 2. We are improving on the solution by getting better result
 
 **Submission 3: Training & Evaluation Runs**
 - Stephen McCabe: Set up dataset pipeline. Compiled and preprocessed mixed source dataset for the continued pre-training. Some more sections of the report written, as much as is possible with results data still on the way.
-- Anuj Patnaik: ...
+- Anuj Patnaik: Created perturbed datasets for each of the tasks. Also, ran the evaluate model scripts to come up with the benchmarks. There is a slight issue with getting the actual values. The results will be posted by the next submission.
 - Bradley Gore:Added NF4 quantization. Switched from random Ubuntu image to Nvidia based pytorch image. Updated packages to work with newer image, not break code, and add support for SDPA. Sucessfully pre-trained starcoder-1b on ir dataset with 250M Tokens.
 
 
