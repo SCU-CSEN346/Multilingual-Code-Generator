@@ -458,6 +458,27 @@ def main():
         trainer.save_metrics("train", metrics)
         trainer.save_state()
 
+        if trainer.is_world_process_zero():
+            from huggingface_hub import HfApi, create_repo
+
+            repo_id = "gorebradleyi/test"
+            api = HfApi()
+
+            print(f"Uploading model to {repo_id}...")
+            try:
+                create_repo(repo_id=repo_id, repo_type="model", exist_ok=True) 
+
+                api.upload_folder(
+                    folder_path=clean_dir,
+                    repo_id=repo_id,
+                    repo_type="model",
+                    commit_message="End of training upload"
+                )
+                print(f"Successfully uploaded to https://huggingface.co/{repo_id}")
+            except Exception as e:
+                print(f"Upload failed: {e}")
+                
+
     # Evaluation
     if training_args.do_eval:
         logger.info("*** Evaluate ***")
