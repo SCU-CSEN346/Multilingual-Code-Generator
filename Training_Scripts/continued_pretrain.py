@@ -285,8 +285,10 @@ def main():
         data_args.dataset_name,
         data_args.dataset_config_name,
         cache_dir=model_args.cache_dir,
-        token=model_args.token
+        token=model_args.token,
+        data_dir="tokenized_dataset_starcoderbase-1b_chunk1k"
     )
+    print(raw_datasets)
     if "validation" not in raw_datasets.keys():
         raw_datasets["validation"] = load_dataset(
             data_args.dataset_name,
@@ -356,7 +358,7 @@ def main():
         input_embeddings = model_base.get_input_embeddings().weight.data
         output_embeddings = model_base.get_output_embeddings().weight.data
 
-        model_base.resize_token_embeddings(len(tokenizer))
+        model_base.resize_token_embeddings(len(tokenizer), pad_to_multiple_of=8)
 
         input_embeddings_avg = input_embeddings[:embedding_size].mean(dim=0, keepdim=True)
         output_embeddings_avg = output_embeddings[:embedding_size].mean(dim=0, keepdim=True)
@@ -366,7 +368,8 @@ def main():
         logger.info(f"Setting the newly added input embedding tokens to {input_embeddings_avg}")
         output_embeddings[embedding_size:] = output_embeddings_avg
     elif len(tokenizer) < embedding_size:
-        model_base.resize_token_embeddings(len(tokenizer))
+        model_base.resize_token_embeddings(len(tokenizer), pad_to_multiple_of=8)
+
 
     model_base = prepare_model_for_kbit_training(model_base, use_gradient_checkpointing=False)
     adapter_config = LoraConfig(
@@ -445,7 +448,8 @@ def main():
         elif last_checkpoint is not None:
             checkpoint = last_checkpoint
         train_result = trainer.train(resume_from_checkpoint=checkpoint)
-        trainer.save_model()  # Saves the tokenizer too for easy upload
+        clean_dir = "/workspace/final_upload_weights"
+        trainer.save_model(clean_dir)
 
         metrics = train_result.metrics
 
