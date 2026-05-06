@@ -2,8 +2,8 @@
 
 # --- 1. ARGUMENT HANDLING ---
 # We expect 5 args now: [mode] [sif] [scripts] [train_json] [ds_json]
-if [ "$#" -ne 5 ]; then
-    echo "Usage: $0 [--interactive | --batch] <sif_path> <scripts_dir> <training_json> <deepspeed_json>"
+if [ "$#" -ne 4 ]; then
+    echo "Usage: $0 [--interactive | --batch] <sif_path> <scripts_dir> <training_json>"
     exit 1
 fi
 
@@ -11,7 +11,6 @@ MODE=$1
 IMAGE_SIF=$(readlink -f "$2")
 HOST_SCRIPTS_DIR=$(readlink -f "$3")
 HOST_TRAIN_JSON=$(readlink -f "$4")
-HOST_DS_JSON=$(readlink -f "$5")
 
 # --- 2. WORKSPACE SETUP ---
 export MY_SCRATCH="/WAVE/scratch/CSEN-346-Sp26/$USER"
@@ -22,7 +21,6 @@ FAKE_HOME="$MY_SCRATCH/fake_home"
 mkdir -p "$NEW_WORKSPACE/output" "$FAKE_HOME"
 cp -r "$HOST_SCRIPTS_DIR/." "$NEW_WORKSPACE/"
 cp "$HOST_TRAIN_JSON" "$NEW_WORKSPACE/train_config.json"
-cp "$HOST_DS_JSON" "$NEW_WORKSPACE/ds_config.json"
 
 # --- 3. PREPARE THE COMMAND ---
 # Flatten JSON to CLI flags (using the container's python)
@@ -40,10 +38,8 @@ EXEC_CMD="singularity exec --nv -C \
     accelerate launch --num_processes=1 --main_process_port=29699 \
     continued_pretrain.py \
     $JSON_FLAGS \
-    --output_dir /workspace/output \
-    --deepspeed ds_config.json \
-    --token \$HF_TOKEN \
-    --wandb_token \$WANDB_API_KEY"
+    --output_dir /workspace/output"
+
 
 # --- 4. SLURM PARAMETERS ---
 # 2-day time limit, high memory for the V100
