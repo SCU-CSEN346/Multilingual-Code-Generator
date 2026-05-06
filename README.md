@@ -13,6 +13,12 @@ We are doing Option 2. We are improving on the solution by getting better result
 - Anuj Patnaik: Worked on the Parameter Efficient Fine Tuning and the Experimental Setup in the paper
 - Bradley Gore: Created an improved training image. Created scripts for running training scripts using HPC slurm. Got continued-pretrain to run. Performed initial testing using FP16 to try to speed up training speed.
 
+**Submission 3: Training & Evaluation Runs**
+- Stephen McCabe: ...
+- Anuj Patnaik: ...
+- Bradley Gore:Added NF4 quantization. Switched from random Ubuntu image to Nvidia based pytorch image. Updated packages to work with newer image, not break code, and add support for SDPA. Sucessfully pre-trained starcoder-1b on ir dataset with 250M Tokens.
+
+
 ## SETUP
 This section outlines basics to set things up. *It is also a work in progress*
 
