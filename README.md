@@ -14,7 +14,7 @@ We are doing Option 2. We are improving on the solution by getting better result
 - Bradley Gore: Created an improved training image. Created scripts for running training scripts using HPC slurm. Got continued-pretrain to run. Performed initial testing using FP16 to try to speed up training speed.
 
 **Submission 3: Training & Evaluation Runs**
-- Stephen McCabe: ...
+- Stephen McCabe: Set up dataset pipeline. Compiled and preprocessed mixed source dataset for the continued pre-training. Some more sections of the report written, as much as is possible with results data still on the way.
 - Anuj Patnaik: ...
 - Bradley Gore:Added NF4 quantization. Switched from random Ubuntu image to Nvidia based pytorch image. Updated packages to work with newer image, not break code, and add support for SDPA. Sucessfully pre-trained starcoder-1b on ir dataset with 250M Tokens.
 
