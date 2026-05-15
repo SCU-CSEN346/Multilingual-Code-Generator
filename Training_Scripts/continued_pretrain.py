@@ -153,6 +153,9 @@ class ModelArguments:
     lora_dropout: float = field(
         default=0.1, metadata={"help": "Dropout value for LoRA layers."}
     )
+    use_gradient_checkpointing: bool = field(
+        default=False, metadata={"help": "Whether to use gradient checkpointing."}
+    )
     def __post_init__(self):
         if self.config_overrides is not None and (self.config_name is not None or self.model_name_or_path is not None):
             raise ValueError(
@@ -206,6 +209,9 @@ class DataTrainingArguments:
     preprocessing_num_workers: Optional[int] = field(
         default=None,
         metadata={"help": "The number of processes to use for the preprocessing."},
+    )
+    data_dir: Optional[str] = field(
+        default=None, metadata={"help": "The data directory containing the dataset."}
     )
 
     def __post_init__(self):
@@ -286,7 +292,7 @@ def main():
         data_args.dataset_config_name,
         cache_dir=model_args.cache_dir,
         token=model_args.token,
-        data_dir="tokenized_dataset_starcoderbase-1b_chunk1k"
+        data_dir=data_args.data_dir
     )
     print(raw_datasets)
     if "validation" not in raw_datasets.keys():
@@ -374,7 +380,7 @@ def main():
         model_base.resize_token_embeddings(len(tokenizer), pad_to_multiple_of=8)
 
 
-    model_base = prepare_model_for_kbit_training(model_base, use_gradient_checkpointing=False)
+    model_base = prepare_model_for_kbit_training(model_base, use_gradient_checkpointing=model_args.use_gradient_checkpointing)
     adapter_config = LoraConfig(
         lora_alpha=model_args.lora_alpha,
         lora_dropout=model_args.lora_dropout,
