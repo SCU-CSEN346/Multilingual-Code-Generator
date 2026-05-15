@@ -360,13 +360,16 @@ def main():
 
         model_base.resize_token_embeddings(len(tokenizer), pad_to_multiple_of=8)
 
+        new_input_embeddings = model_base.get_input_embeddings().weight.data
+        new_output_embeddings = model_base.get_output_embeddings().weight.data
+
         input_embeddings_avg = input_embeddings[:embedding_size].mean(dim=0, keepdim=True)
         output_embeddings_avg = output_embeddings[:embedding_size].mean(dim=0, keepdim=True)
 
         logger.info(f"Setting the newly added input embedding tokens to {input_embeddings_avg}")
-        input_embeddings[embedding_size:] = input_embeddings_avg
+        new_input_embeddings[embedding_size:] = input_embeddings_avg
         logger.info(f"Setting the newly added input embedding tokens to {input_embeddings_avg}")
-        output_embeddings[embedding_size:] = output_embeddings_avg
+        new_output_embeddings[embedding_size:] = output_embeddings_avg
     elif len(tokenizer) < embedding_size:
         model_base.resize_token_embeddings(len(tokenizer), pad_to_multiple_of=8)
 
