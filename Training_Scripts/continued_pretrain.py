@@ -312,6 +312,11 @@ def main():
         )    
     tokenized_datasets = raw_datasets
 
+    # Force trust_remote_code to False for BitNet since the custom transformers fork handles it natively,
+    # and the necessary files do not exist on the Hub.
+    if model_args.model_name_or_path and "bitnet" in model_args.model_name_or_path.lower():
+        model_args.trust_remote_code = False
+
     config_kwargs = {
         "cache_dir": model_args.cache_dir,
         "revision": model_args.model_revision,
