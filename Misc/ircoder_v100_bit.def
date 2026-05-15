@@ -1,0 +1,35 @@
+Bootstrap: docker
+From: nvcr.io/nvidia/pytorch:24.10-py3
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update && apt-get install -y git build-essential libaio-dev
+
+    # 1. Find the torch packages that come with the base image
+    pip list --format=freeze | grep -E "torch|triton|nvidia" > /tmp/constraints.txt
+
+    # 2. Install packages
+    # --pre: allows torch 2.5.0a0
+    pip install --no-cache-dir --pre -c /tmp/constraints.txt \
+        "numpy<2.0.0" \
+        "pydantic<2.0.0" \
+        "bitsandbytes>=0.45.0" \
+        "accelerate==0.34.2" \
+        "datasets<3.0.0" \
+        "evaluate<0.5.0" \
+        "deepspeed==0.14.4" \
+        "huggingface_hub==0.24.1" \
+        "transformers==4.43.3" \
+        "peft==0.12.0" \
+        scipy sentencepiece wandb
+
+    # 3. Install bitnet package
+    pip install git+https://github.com/huggingface/transformers.git@096f25ae1f501a084d8ff2dcaf25fbc2bd60eba4
+
+%environment
+    export LC_ALL=C
+    export PYTHONUNBUFFERED=1
+    export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+
+%runscript
+    exec /usr/bin/python "$@"
