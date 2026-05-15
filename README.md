@@ -18,6 +18,11 @@ We are doing Option 2. We are improving on the solution by getting better result
 - Anuj Patnaik: Created perturbed datasets for each of the tasks. Also, ran the evaluate model scripts to come up with the benchmarks. There is a slight issue with getting the actual values. The results will be posted by the next submission.
 - Bradley Gore:Added NF4 quantization. Switched from random Ubuntu image to Nvidia based pytorch image. Updated packages to work with newer image, not break code, and add support for SDPA. Sucessfully pre-trained starcoder-1b on ir dataset with 250M Tokens.
 
+**Submission 4: More Evaluation & BitNet**
+- Stephen McCabe: ...
+- Anuj Patnaik: ...
+- Bradley Gore: Added build environments and settings to train microsoft/bitnet-b1.58-2B-4T-bf16. Updated source code and added more config options. Debugged and began pretraining for bitnet. Wrote first draft of Limitations and Ethical Considerations sections of the paper.
+
 
 ## SETUP
 This section outlines basics to set things up. *It is also a work in progress*
