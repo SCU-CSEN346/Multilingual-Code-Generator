@@ -20,7 +20,7 @@ We are doing Option 2. We are improving on the solution by getting better result
 
 **Submission 4: More Evaluation & BitNet**
 - Stephen McCabe: ...
-- Anuj Patnaik: ...
+- Anuj Patnaik: Ran the evaluation model scripts for pass 1 for each of the tasks with the starcoder model. Still waiting on the results for the ircoder model we developed. Added my results to Table 1 on the report.
 - Bradley Gore: Added build environments and settings to train microsoft/bitnet-b1.58-2B-4T-bf16. Updated source code and added more config options. Debugged and began pretraining for bitnet. Wrote first draft of Limitations and Ethical Considerations sections of the paper.
 
 
