@@ -19,7 +19,7 @@ We are doing Option 2. We are improving on the solution by getting better result
 - Bradley Gore:Added NF4 quantization. Switched from random Ubuntu image to Nvidia based pytorch image. Updated packages to work with newer image, not break code, and add support for SDPA. Sucessfully pre-trained starcoder-1b on ir dataset with 250M Tokens.
 
 **Submission 4: More Evaluation & BitNet**
-- Stephen McCabe: ...
+- Stephen McCabe: Data pipeline improvements for ease of use. Data preprocessing for microsoft model training. Additional edits and writing for ethical considerations.
 - Anuj Patnaik: Ran the evaluation model scripts for pass 1 for each of the tasks with the starcoder model. Still waiting on the results for the ircoder model we developed. Added my results to Table 1 on the report.
 - Bradley Gore: Added build environments and settings to train microsoft/bitnet-b1.58-2B-4T-bf16. Updated source code and added more config options. Debugged and began pretraining for bitnet. Wrote first draft of Limitations and Ethical Considerations sections of the paper.
 
