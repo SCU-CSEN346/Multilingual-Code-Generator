@@ -30,8 +30,8 @@ from transformers import (
     HfArgumentParser,
     Trainer,
     TrainingArguments,
-    default_data_collator,
-    is_torch_tpu_available,
+    DataCollatorForLanguageModeling,
+    is_torch_xla_available,
     set_seed,
 )
 from transformers.trainer_utils import get_last_checkpoint
@@ -153,6 +153,9 @@ class ModelArguments:
     lora_dropout: float = field(
         default=0.1, metadata={"help": "Dropout value for LoRA layers."}
     )
+    use_gradient_checkpointing: bool = field(
+        default=False, metadata={"help": "Whether to use gradient checkpointing."}
+    )
     def __post_init__(self):
         if self.config_overrides is not None and (self.config_name is not None or self.model_name_or_path is not None):
             raise ValueError(
@@ -206,6 +209,9 @@ class DataTrainingArguments:
     preprocessing_num_workers: Optional[int] = field(
         default=None,
         metadata={"help": "The number of processes to use for the preprocessing."},
+    )
+    data_dir: Optional[str] = field(
+        default=None, metadata={"help": "The data directory containing the dataset."}
     )
 
     def __post_init__(self):
@@ -317,6 +323,11 @@ def main():
         )    
     tokenized_datasets = raw_datasets
 
+    # Force trust_remote_code to False for BitNet since the custom transformers fork handles it natively,
+    # and the necessary files do not exist on the Hub.
+    if model_args.model_name_or_path and "bitnet" in model_args.model_name_or_path.lower():
+        model_args.trust_remote_code = False
+
     config_kwargs = {
         "cache_dir": model_args.cache_dir,
         "revision": model_args.model_revision,
@@ -369,19 +380,23 @@ def main():
         input_embeddings = model_base.get_input_embeddings().weight.data
         output_embeddings = model_base.get_output_embeddings().weight.data
 
-        model_base.resize_token_embeddings(len(tokenizer))
+        model_base.resize_token_embeddings(len(tokenizer), pad_to_multiple_of=8)
+
+        new_input_embeddings = model_base.get_input_embeddings().weight.data
+        new_output_embeddings = model_base.get_output_embeddings().weight.data
 
         input_embeddings_avg = input_embeddings[:embedding_size].mean(dim=0, keepdim=True)
         output_embeddings_avg = output_embeddings[:embedding_size].mean(dim=0, keepdim=True)
 
         logger.info(f"Setting the newly added input embedding tokens to {input_embeddings_avg}")
-        input_embeddings[embedding_size:] = input_embeddings_avg
+        new_input_embeddings[embedding_size:] = input_embeddings_avg
         logger.info(f"Setting the newly added input embedding tokens to {input_embeddings_avg}")
-        output_embeddings[embedding_size:] = output_embeddings_avg
+        new_output_embeddings[embedding_size:] = output_embeddings_avg
     elif len(tokenizer) < embedding_size:
-        model_base.resize_token_embeddings(len(tokenizer))
+        model_base.resize_token_embeddings(len(tokenizer), pad_to_multiple_of=8)
 
-    model_base = prepare_model_for_kbit_training(model_base, use_gradient_checkpointing=False)
+
+    model_base = prepare_model_for_kbit_training(model_base, use_gradient_checkpointing=model_args.use_gradient_checkpointing)
     adapter_config = LoraConfig(
         lora_alpha=model_args.lora_alpha,
         lora_dropout=model_args.lora_dropout,
@@ -443,10 +458,10 @@ def main():
         eval_dataset=eval_dataset if training_args.do_eval else None,
         tokenizer=tokenizer,
         # Data collator will default to DataCollatorWithPadding, so we change it.
-        data_collator=default_data_collator,
-        compute_metrics=compute_metrics if training_args.do_eval and not is_torch_tpu_available() else None,
+        data_collator=DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False),
+        compute_metrics=compute_metrics if training_args.do_eval and not is_torch_xla_available() else None,
         preprocess_logits_for_metrics=preprocess_logits_for_metrics
-        if training_args.do_eval and not is_torch_tpu_available()
+        if training_args.do_eval and not is_torch_xla_available()
         else None,
     )
 
@@ -458,7 +473,8 @@ def main():
         elif last_checkpoint is not None:
             checkpoint = last_checkpoint
         train_result = trainer.train(resume_from_checkpoint=checkpoint)
-        trainer.save_model()  # Saves the tokenizer too for easy upload
+        clean_dir = "/workspace/final_upload_weights"
+        trainer.save_model(clean_dir)
 
         metrics = train_result.metrics
 
@@ -470,6 +486,27 @@ def main():
         trainer.log_metrics("train", metrics)
         trainer.save_metrics("train", metrics)
         trainer.save_state()
+
+        if trainer.is_world_process_zero():
+            from huggingface_hub import HfApi, create_repo
+
+            repo_id = "gorebradleyi/test"
+            api = HfApi()
+
+            print(f"Uploading model to {repo_id}...")
+            try:
+                create_repo(repo_id=repo_id, repo_type="model", exist_ok=True) 
+
+                api.upload_folder(
+                    folder_path=clean_dir,
+                    repo_id=repo_id,
+                    repo_type="model",
+                    commit_message="End of training upload"
+                )
+                print(f"Successfully uploaded to https://huggingface.co/{repo_id}")
+            except Exception as e:
+                print(f"Upload failed: {e}")
+                
 
     # Evaluation
     if training_args.do_eval:

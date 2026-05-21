@@ -37,6 +37,10 @@ SAVE_MODULES_MAP = {
     "codellama/CodeLlama-7b-hf": [
         "embed_tokens",
         "lm_head"      
+    ],
+    "microsoft/bitnet-b1.58-2B-4T-bf16": [
+        "embed_tokens",
+        "lm_head"
     ]
 }
 
@@ -131,6 +135,14 @@ LORA_COMPONENTS_MAP = {
         "o_proj",
         #"up_proj",
         #"down_proj"      
+    ],
+    "microsoft/bitnet-b1.58-2B-4T-bf16": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        #"up_proj",
+        #"down_proj"
     ]
 }
 
@@ -304,6 +316,30 @@ TOKENIZER_MAP = {
             '<commit_after>',
             '<reponame>',
         ]
+    ),
+    "microsoft/bitnet-b1.58-2B-4T-bf16": AutoTokenizer.from_pretrained(
+        "microsoft/bitnet-b1.58-2B-4T-bf16",
+        padding_side="left", 
+        truncation_side="right", 
+        model_max_length=4096, 
+        pad_token="<|pad|>", 
+        additional_special_tokens=[
+            '<source_to_llvm>', 
+            '<llvm_to_source>',
+            '<filename>',
+            '<gh_stars>',
+            '<issue_start>',
+            '<issue_comment>',
+            '<issue_closed>',
+            '<jupyter_start>',
+            '<jupyter_text>',
+            '<jupyter_code>',
+            '<jupyter_output>',
+            '<empty_output>',
+            '<commit_before>',
+            '<commit_msg>',
+            '<commit_after>',
+            '<reponame>',
+        ]
     )
 }
-
