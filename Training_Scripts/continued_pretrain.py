@@ -281,12 +281,25 @@ def main():
     # Set seed before initializing model.
     set_seed(training_args.seed)
 
-    raw_datasets = load_dataset(
-        data_args.dataset_name,
-        data_args.dataset_config_name,
-        cache_dir=model_args.cache_dir,
-        token=model_args.token
+    import os as _os
+    _local_parquets = (
+        _os.path.isdir(data_args.dataset_name) and
+        any(f.endswith(".parquet") for f in _os.listdir(data_args.dataset_name))
     )
+    if _local_parquets:
+        _data_files = {
+            _os.path.splitext(f)[0]: _os.path.join(data_args.dataset_name, f)
+            for f in sorted(_os.listdir(data_args.dataset_name))
+            if f.endswith(".parquet")
+        }
+        raw_datasets = load_dataset("parquet", data_files=_data_files, cache_dir=model_args.cache_dir)
+    else:
+        raw_datasets = load_dataset(
+            data_args.dataset_name,
+            data_args.dataset_config_name,
+            cache_dir=model_args.cache_dir,
+            token=model_args.token
+        )
     if "validation" not in raw_datasets.keys():
         raw_datasets["validation"] = load_dataset(
             data_args.dataset_name,
