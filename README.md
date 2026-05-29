@@ -25,7 +25,7 @@ We are doing Option 2. We are improving on the solution by getting better result
 
 **Submission 5: Presentation**
 - Stephen McCabe: ...
-- Anuj Patnaik: ...
+- Anuj Patnaik: Ran evaluation model scripts for the BITNET base and the BITNET IR. Still waiting on one of the results for BITNET base. Also, I worked on the slides. 
 - Bradley Gore: Worked on slide content. Added visuals to slides. Outlined Presentation. Looked into the different ReCode codebases (provided by paper, vs original) to try to find why our validation scores differ.
 
 
