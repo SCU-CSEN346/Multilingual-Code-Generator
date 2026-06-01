@@ -24,7 +24,7 @@ We are doing Option 2. We are improving on the solution by getting better result
 - Bradley Gore: Added build environments and settings to train microsoft/bitnet-b1.58-2B-4T-bf16. Updated source code and added more config options. Debugged and began pretraining for bitnet. Wrote first draft of Limitations and Ethical Considerations sections of the paper.
 
 **Submission 5: Presentation**
-- Stephen McCabe: ...
+- Stephen McCabe: Presentation visuals and content, writing and editing for slide deck. Failed to fix MultiPL-E docker image, rip.
 - Anuj Patnaik: Ran evaluation model scripts for the BITNET base and the BITNET IR. Still waiting on one of the results for BITNET base. Also, I worked on the slides. 
 - Bradley Gore: Worked on slide content. Added visuals to slides. Outlined Presentation. Looked into the different ReCode codebases (provided by paper, vs original) to try to find why our validation scores differ.
 
