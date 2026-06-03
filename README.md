@@ -37,6 +37,8 @@ To prevent API keys being accidentally uploaded to git, they should be stored as
 The following environment variables must be set to use the continued pretrain script.
 * HF_TOKEN
 * WANDB_API_KEY
+### References
+For the run_perturb.slurm part of the evaluation scripts, I used ChatGPT to help with the aug method part of the script.
 
 ### Accepting Terms
 TO access starcoder from Hugging Face, you must
