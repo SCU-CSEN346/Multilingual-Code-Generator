@@ -13,7 +13,6 @@
 set -euo pipefail
 module purge
 module load PyTorch/2.10.0-Python-3.12
-#Reference: I used ChatGPT to help with the AUG_METHOD part of the bash script.
 cd /WAVE/scratch2/CSEN-346-Sp26/Multilingual-Code-Generator/recode
 mkdir -p logs
 
