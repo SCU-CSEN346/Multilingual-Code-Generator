@@ -23,6 +23,11 @@ We are doing Option 2. We are improving on the solution by getting better result
 - Anuj Patnaik: Ran the evaluation model scripts for pass 1 for each of the tasks with the starcoder model. Still waiting on the results for the ircoder model we developed. Added my results to Table 1 on the report.
 - Bradley Gore: Added build environments and settings to train microsoft/bitnet-b1.58-2B-4T-bf16. Updated source code and added more config options. Debugged and began pretraining for bitnet. Wrote first draft of Limitations and Ethical Considerations sections of the paper.
 
+**Submission 5: Presentation**
+- Stephen McCabe: Presentation visuals and content, writing and editing for slide deck. Failed to fix MultiPL-E docker image, rip.
+- Anuj Patnaik: Ran evaluation model scripts for the BITNET base and the BITNET IR. Still waiting on one of the results for BITNET base. Also, I worked on the slides. 
+- Bradley Gore: Worked on slide content. Added visuals to slides. Outlined Presentation. Looked into the different ReCode codebases (provided by paper, vs original) to try to find why our validation scores differ.
+
 
 ## SETUP
 This section outlines basics to set things up. *It is also a work in progress*
@@ -32,6 +37,8 @@ To prevent API keys being accidentally uploaded to git, they should be stored as
 The following environment variables must be set to use the continued pretrain script.
 * HF_TOKEN
 * WANDB_API_KEY
+### References
+For the run_perturb.slurm part of the evaluation scripts, I used ChatGPT to help with the aug method part of the script.
 
 ### Accepting Terms
 TO access starcoder from Hugging Face, you must
