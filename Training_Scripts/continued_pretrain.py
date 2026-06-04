@@ -144,9 +144,6 @@ class ModelArguments:
             )
         },
     )
-    llm_int8_threshold: float = field(
-        default=6.0, metadata={"help": "The thresholf for a parameter to be designated a quantization outlier."}
-    )
     lora_alpha: int = field(
         default=16, metadata={"help": "The interpolation importance factor for the LoRA adapter."}
     )
