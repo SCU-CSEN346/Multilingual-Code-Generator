@@ -126,3 +126,7 @@ _Links require a Santa Clara email because of SCU Google drive restrictions_
 - Stephen McCabe: Poster and final paper work
 - Anuj Patnaik: Poster and final paper work
 - Bradley Gore: Poster and final paper work. Readme Train Image, Continued Train, and Demo sections. Created demos.
+
+
+## AI Usage
+AI tools were primarly used in the creations of scripts. ChatGPT was used in the development of `Evaluation_Scripts/run_perturb.slurm`. Gemini was used in the creation of `Misc/build_image.slurm` and `Training_Scripts/pretrain_slurm.sh`. It was also used to help debug some of the many issues that occured when updating `Training_Scripts/continued_pretrain.py`. Research and ideas were not outsourced to LLMs.
