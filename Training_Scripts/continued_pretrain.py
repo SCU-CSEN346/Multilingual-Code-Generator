@@ -55,6 +55,9 @@ class LoggingArguments:
     wandb_token: str = field(
         default=None, metadata={"help": "API token for WandB hub."}
     )
+    hf_group: str = field(
+        default=None, metadata={"help": "The group/user under which to save to in Hugging Face."}
+    )
 
 
 @dataclass
@@ -463,7 +466,10 @@ def main():
             checkpoint = last_checkpoint
         train_result = trainer.train(resume_from_checkpoint=checkpoint)
         clean_dir = "/workspace/final_upload_weights"
-        trainer.save_model(clean_dir)
+        
+        merged_model = model.merge_and_unload()
+        merged_model.save_pretrained(clean_dir)
+        tokenizer.save_pretrained(clean_dir)
 
         metrics = train_result.metrics
 
@@ -476,10 +482,10 @@ def main():
         trainer.save_metrics("train", metrics)
         trainer.save_state()
 
-        if trainer.is_world_process_zero():
+        if log_args.hf_group and trainer.is_world_process_zero():
             from huggingface_hub import HfApi, create_repo
 
-            repo_id = "gorebradleyi/test"
+            repo_id = f"{log_args.hf_group}/{log_args.project_name}"
             api = HfApi()
 
             print(f"Uploading model to {repo_id}...")
