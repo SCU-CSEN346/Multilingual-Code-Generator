@@ -4,7 +4,7 @@ We are doing Option 2. We are improving on the solution by getting better result
 
 
 ## Setup
-This section outlines basics to set things up. *It is also a work in progress*
+Things to do before you run any code.
 
 ### Environment Variables
 To prevent API keys being accidentally uploaded to git, they should be stored as environment variables.
@@ -87,6 +87,15 @@ The results will be live uploaded to your Weights and Biases account. This is th
 The model weights will also be uploaded to Hugging Face if you provide the `hf_group` argument (and have the proper token to upload there).
 
 
+## Colab Demos
+Because the HPC environment we train on is often locked behind a queue, Google Colab demo files were created. Copies of the demo files are in `colab_tests` The demos include:
+* [Demo](https://colab.research.google.com/drive/1fL-VBFIIscadSuMGXmX_WkcxitOhLZTN?usp=sharing):
+This file shows how to load and run the base model as well as IR variants. It also has a Haskell specific example
+* [MultiPL-E](https://colab.research.google.com/drive/1rClf-3ojG_TIf8yMMxbZcLCK7vX4DcSs?usp=sharing):
+This file shows how to evaluate and compare the MultiPL-E score of multiple models. It also shows installing the Haskell language which isnt built into Google Colab. _Note These tests may take a while to run depending on what GPU you use._
+
+_Links require a Santa Clara email because of SCU Google drive restrictions_
+
 ## Submission History
 **Submission 1: Introduction & Initial commit**
 - Stephen McCabe: paper write up/introduction
@@ -112,3 +121,8 @@ The model weights will also be uploaded to Hugging Face if you provide the `hf_g
 - Stephen McCabe: Presentation visuals and content, writing and editing for slide deck. Failed to fix MultiPL-E docker image, rip.
 - Anuj Patnaik: Ran evaluation model scripts for the BITNET base and the BITNET IR. Still waiting on one of the results for BITNET base. Also, I worked on the slides. 
 - Bradley Gore: Worked on slide content. Added visuals to slides. Outlined Presentation. Looked into the different ReCode codebases (provided by paper, vs original) to try to find why our validation scores differ.
+
+**Submission 6: Final**
+- Stephen McCabe: Poster and final paper work
+- Anuj Patnaik: Poster and final paper work
+- Bradley Gore: Poster and final paper work. Readme Train Image, Continued Train, and Demo sections. Created demos.
