@@ -3,7 +3,7 @@ This project builds upon the work of: [*IRCoder: Intermediate Representations Ma
 We are doing Option 2. We are improving on the solution by getting better results.
 
 
-## SETUP
+## Setup
 This section outlines basics to set things up. *It is also a work in progress*
 
 ### Environment Variables
@@ -41,6 +41,51 @@ Images can be compiled with the `Misc/build_image.slurm` script. To compile the 
 sbatch Misc/build_image.slurm Misc/ircoder_v100.def"
 ```
 This will produce a `.sif` file that you can use for training.
+
+
+## Continued Pre-Training
+This section details running continued pre-training
+
+### Python Modificaitons
+Continued Pre-Training involves using a modified version of the original author's `Training_Scripts/continued_pretrain.py`. However, the script has been modified for multiple reasons:
+* Deprecated function replaced
+    * To update to newer versions of some packages the updated equivalents of some deprecated functions used by the authors have been used.
+* Specify SDPA Attention
+    * This is done to improve runtime
+* Used NormalFloat-4 Quantization for forward pass
+    * Improves runtime and decreases memory usage
+* Added Hugging Face Uploading
+* Added LoRA config for BitNet-b1.58
+
+### Tesla V100 Limitations
+The Tesla V100 slowed much of our development and limited what we could test. Here are a few ways we were limited:
+* No BF16 support
+* No Flash Attention
+    * This was attempted. There are repos that claim to backport Flash Attention to the V100, but none of them seemed to play well with our singularity container.
+* May have Broken DeepSpeed
+    * We could not get DeepSpeed to work in a reasonable amount of time, so it was dropped
+* May have prevented QLoRA
+    * This also didn't play nicely with the environemnt
+* **Limited Max Sequence Length**
+    * This likely greatly hurt our results. We were unable to increase sequence length due to VRAM and runtime limitations.
+
+### Running Continued Pre-Train
+A script was created to submit the training run using SLURM and the desired training image. The code was also modified to support Json files for arguments. These arguments life in the `models` folder and archive the exace models we trained.
+
+To run, use the following:
+```bash
+Training_Scripts/pretrain_slurm.sh [--interactive | --batch] <sif_path> <scripts_dir> <training_json>
+```
+For an example run try:
+```bash
+Training_Scripts/pretrain_slurm.sh --interactive Misc/ircoder_v100.sif Training_Scripts/ models/example.json
+```
+
+### Getting Results
+The results will be live uploaded to your Weights and Biases account. This is the easiest way to monitor a run's progress and check train/val metrics.
+
+The model weights will also be uploaded to Hugging Face if you provide the `hf_group` argument (and have the proper token to upload there).
+
 
 ## Submission History
 **Submission 1: Introduction & Initial commit**
