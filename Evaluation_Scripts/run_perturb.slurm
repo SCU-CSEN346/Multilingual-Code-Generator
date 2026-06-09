@@ -18,6 +18,7 @@ mkdir -p logs
 
 METHODS="natgen"
 SEEDS=0
+#Change based on seed and method
 
 if [[ "$METHOD" == "func_name" ]]; then
     TASK="code_generation"

@@ -2,6 +2,100 @@
 This project builds upon the work of: [*IRCoder: Intermediate Representations Make Language Models Robust Multilingual Code Generators*](https://arxiv.org/pdf/2403.03894).
 We are doing Option 2. We are improving on the solution by getting better results.
 
+
+## Setup
+Things to do before you run any code.
+
+### Environment Variables
+To prevent API keys being accidentally uploaded to git, they should be stored as environment variables.
+The following environment variables must be set to use the continued pretrain script.
+* HF_TOKEN
+* WANDB_API_KEY
+
+### Accepting Terms
+TO access starcoder from Hugging Face, you must
+1. Log into HF
+2. Visit https://huggingface.co/bigcode/starcoderbase-1b and click *Agree ane access repository*
+3. Visit https://huggingface.co/bigcode/starcoderbase-3b and click *Agree ane access repository*
+4. Visit https://huggingface.co/bigcode/starcoderbase-7b and click *Agree ane access repository*
+
+
+## Train Image
+To allow a consistent image for training purposes, a base singularity (apptainer) image is provided. The original authors provided a docker image to use, but it had two issues: 1. singularity is preferred to docker in HPC environments. 2. The docker image the original authors provide did not include python package versions and has broken with time.
+
+### V100 Image
+We provide an image specifically tuned to work with an Nvidia Tesla V100. It is tunned to run as similar to the original docker image, but with multiple benefits:
+* Based on an Nvidia base image instead of an arbitrary Ubuntu image.
+    * This required a very particular version as V100 support was dropped around late 2024.
+* Updated PyTorch version
+    * This was needed to allow SDPA Attention.
+* Pinned all major package versions
+    * Allows for significantly better reproducibility. 
+
+### V100 Bit Image
+This image is built similar to the V100 image, but includes the bitnet python package for training.
+
+### Compiling an Image
+Images can be compiled with the `Misc/build_image.slurm` script. To compile the ircoder_v100.def file run
+```bash
+sbatch Misc/build_image.slurm Misc/ircoder_v100.def"
+```
+This will produce a `.sif` file that you can use for training.
+
+
+## Continued Pre-Training
+This section details running continued pre-training
+
+### Python Modificaitons
+Continued Pre-Training involves using a modified version of the original author's `Training_Scripts/continued_pretrain.py`. However, the script has been modified for multiple reasons:
+* Deprecated function replaced
+    * To update to newer versions of some packages the updated equivalents of some deprecated functions used by the authors have been used.
+* Specify SDPA Attention
+    * This is done to improve runtime
+* Used NormalFloat-4 Quantization for forward pass
+    * Improves runtime and decreases memory usage
+* Added Hugging Face Uploading
+* Added LoRA config for BitNet-b1.58
+
+### Tesla V100 Limitations
+The Tesla V100 slowed much of our development and limited what we could test. Here are a few ways we were limited:
+* No BF16 support
+* No Flash Attention
+    * This was attempted. There are repos that claim to backport Flash Attention to the V100, but none of them seemed to play well with our singularity container.
+* May have Broken DeepSpeed
+    * We could not get DeepSpeed to work in a reasonable amount of time, so it was dropped
+* May have prevented QLoRA
+    * This also didn't play nicely with the environemnt
+* **Limited Max Sequence Length**
+    * This likely greatly hurt our results. We were unable to increase sequence length due to VRAM and runtime limitations.
+
+### Running Continued Pre-Train
+A script was created to submit the training run using SLURM and the desired training image. The code was also modified to support Json files for arguments. These arguments life in the `models` folder and archive the exace models we trained.
+
+To run, use the following:
+```bash
+Training_Scripts/pretrain_slurm.sh [--interactive | --batch] <sif_path> <scripts_dir> <training_json>
+```
+For an example run try:
+```bash
+Training_Scripts/pretrain_slurm.sh --interactive Misc/ircoder_v100.sif Training_Scripts/ models/example.json
+```
+
+### Getting Results
+The results will be live uploaded to your Weights and Biases account. This is the easiest way to monitor a run's progress and check train/val metrics.
+
+The model weights will also be uploaded to Hugging Face if you provide the `hf_group` argument (and have the proper token to upload there).
+
+
+## Colab Demos
+Because the HPC environment we train on is often locked behind a queue, Google Colab demo files were created. Copies of the demo files are in `colab_tests` The demos include:
+* [Demo](https://colab.research.google.com/drive/1fL-VBFIIscadSuMGXmX_WkcxitOhLZTN?usp=sharing):
+This file shows how to load and run the base model as well as IR variants. It also has a Haskell specific example
+* [MultiPL-E](https://colab.research.google.com/drive/1rClf-3ojG_TIf8yMMxbZcLCK7vX4DcSs?usp=sharing):
+This file shows how to evaluate and compare the MultiPL-E score of multiple models. It also shows installing the Haskell language which isnt built into Google Colab. _Note These tests may take a while to run depending on what GPU you use._
+
+_Links require a Santa Clara email because of SCU Google drive restrictions_
+
 ## Submission History
 **Submission 1: Introduction & Initial commit**
 - Stephen McCabe: paper write up/introduction
@@ -28,21 +122,11 @@ We are doing Option 2. We are improving on the solution by getting better result
 - Anuj Patnaik: Ran evaluation model scripts for the BITNET base and the BITNET IR. Still waiting on one of the results for BITNET base. Also, I worked on the slides. 
 - Bradley Gore: Worked on slide content. Added visuals to slides. Outlined Presentation. Looked into the different ReCode codebases (provided by paper, vs original) to try to find why our validation scores differ.
 
+**Submission 6: Final**
+- Stephen McCabe: Poster and final paper work
+- Anuj Patnaik: Poster and final paper work
+- Bradley Gore: Poster and final paper work. Readme Train Image, Continued Train, and Demo sections. Created demos.
 
-## SETUP
-This section outlines basics to set things up. *It is also a work in progress*
 
-### Environment Variables
-To prevent API keys being accidentally uploaded to git, they should be stored as environment variables.
-The following environment variables must be set to use the continued pretrain script.
-* HF_TOKEN
-* WANDB_API_KEY
-### References
-For the run_perturb.slurm part of the evaluation scripts, I used ChatGPT to help with the aug method part of the script.
-
-### Accepting Terms
-TO access starcoder from Hugging Face, you must
-1. Log into HF
-2. Visit https://huggingface.co/bigcode/starcoderbase-1b and click *Agree ane access repository*
-3. Visit https://huggingface.co/bigcode/starcoderbase-3b and click *Agree ane access repository*
-4. Visit https://huggingface.co/bigcode/starcoderbase-7b and click *Agree ane access repository*
+## AI Usage
+AI tools were primarly used in the creations of scripts. ChatGPT was used in the development of `Evaluation_Scripts/run_perturb.slurm`. Gemini was used in the creation of `Misc/build_image.slurm` and `Training_Scripts/pretrain_slurm.sh`. It was also used to help debug some of the many issues that occured when updating `Training_Scripts/continued_pretrain.py`. Research and ideas were not outsourced to LLMs.

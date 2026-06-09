@@ -25,6 +25,7 @@ mkdir -p logs
 source ~/venvs/humaneval/bin/activate
 METHOD=${METHOD:-format}
 SEED=${SEED:-0}
+#Change based on method and seed
 
 MODEL="starcoderbase-1b"
 
